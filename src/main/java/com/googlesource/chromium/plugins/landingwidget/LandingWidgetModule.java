@@ -1,0 +1,21 @@
+// Copyright 2017 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package com.googlesource.chromium.plugins.landingwidget;
+
+import static com.google.gerrit.server.project.ProjectResource.PROJECT_KIND;
+
+import com.google.gerrit.extensions.registration.DynamicSet;
+import com.google.gerrit.extensions.restapi.RestApiModule;
+import com.google.gerrit.extensions.webui.WebUiPlugin;
+
+/** Loads {@code landingwidget} plugin for Chrome. */
+public class LandingWidgetModule extends RestApiModule {
+  @Override
+  protected void configure() {
+    DynamicSet.bind(binder(), WebUiPlugin.class).toInstance(WebUiPlugin.js("landingwidget.js"));
+
+    get(PROJECT_KIND, "config").to(GetLandingWidgetConfig.class);
+  }
+}
