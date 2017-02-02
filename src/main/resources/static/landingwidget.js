@@ -84,18 +84,29 @@ Gerrit.install(function(self) {
 
     // Insert the row into the change info table, before the change actions row.
     var table = document.querySelector('#change_infoTable');
-    var tbody = table.querySelector('tbody');
-    var changeActionsRow = tbody.querySelector('tr #change_actions');
-    while (changeActionsRow && changeActionsRow.nodeName != 'TR') {
-      changeActionsRow = changeActionsRow.parentNode;
-    }
-    if (changeActionsRow && changeActionsRow.parentNode == tbody) {
-      tbody.insertBefore(this.row, changeActionsRow);
+    if (table) {
+      var tbody = table.querySelector('tbody');
+      var changeActionsRow = tbody.querySelector('tr #change_actions');
+      while (changeActionsRow && changeActionsRow.nodeName != 'TR') {
+        changeActionsRow = changeActionsRow.parentNode;
+      }
+      if (changeActionsRow && changeActionsRow.parentNode == tbody) {
+        tbody.insertBefore(this.row, changeActionsRow);
+      } else {
+        // Gerrit doesn't guarantee that #change_actions will forever be a child of
+        // a <tr> of #change_infoTable; if not the case, fall back to just adding
+        // the row at the bottom of the info table.
+        tbody.appendChild(this.row);
+      }
     } else {
-      // Gerrit doesn't guarantee that #change_actions will forever be a child of
-      // a <tr> of #change_infoTable; if not the case, fall back to just adding
-      // the row at the bottom of the info table.
-      tbody.appendChild(this.row);
+      // TODO (viktard): Refactor when PolyGerrit plugins are implemented.
+      var section = document.createElement('section');
+      section.className = 'style-scope gr-change-metadata';
+      section.innerHTML =
+          '<span class="gr-change-metadata style-scope title"></span>' +
+          '<span class="value style-scope gr-change-metadata">&nbsp;</span>';
+      document.querySelector('gr-change-metadata').appendChild(section);
+      this.row = section;
     }
   };
 
@@ -108,9 +119,15 @@ Gerrit.install(function(self) {
    */
   LandingWidget.prototype.update = function(versions, url) {
     var headerCell = this.row.querySelector('th');
+    if (!headerCell) {
+      headerCell = this.row.querySelector('.title');
+    }
     headerCell.innerText = 'Landed in';
 
     var dataCell = this.row.querySelector('td');
+    if (!dataCell) {
+      dataCell = this.row.querySelector('.value');
+    }
     if (versions.length > 0) {
       dataCell.innerHTML = '';
       versions.forEach(function(v) {
