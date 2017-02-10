@@ -5,6 +5,7 @@
 package com.googlesource.chromium.plugins.landingwidget;
 
 import com.google.gerrit.extensions.annotations.PluginName;
+import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestReadView;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.project.NoSuchProjectException;
@@ -30,11 +31,11 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
   }
 
   @Override
-  public LandingConfig apply(ProjectResource project) throws NoSuchProjectException {
+  public Response<LandingConfig> apply(ProjectResource project) throws NoSuchProjectException {
     LandingConfig r = new LandingConfig();
 
     if (!project.getControl().getUser().isIdentifiedUser()) {
-      return r;
+      return Response.none();
     }
 
     Config cfg =
@@ -43,7 +44,7 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
     Iterator<String> names = cfg.getSubsections(PROJECT).iterator();
     if (!names.hasNext()) {
       LOG.info("Project " + project.getName() + " has an empty config.");
-      return r;
+      return Response.none();
     }
     String name = names.next();
     if (names.hasNext()) {
@@ -53,7 +54,7 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
     r.disabled = cfg.getString(PROJECT, name, "disabled");
     r.instanceName = cfg.getString(PROJECT, name, "instanceName");
     r.serviceUrl = cfg.getString(PROJECT, name, "serviceUrl");
-    return r;
+    return Response.ok(r);
   }
 
   static class LandingConfig {
