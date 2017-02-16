@@ -36,6 +36,9 @@ Gerrit.install(function(self) {
     });
   }
 
+  /**
+   * @returns {!Promise} that resolves to config Object or null.
+   */
   var getProjectConfig = function(project) {
     var config = window.landingWidgetConfig;
 
@@ -50,7 +53,7 @@ Gerrit.install(function(self) {
         }
       }
       if (!isEnabledForProject) {
-        return false;
+        return Promise.resolve(null);
       }
     }
 
@@ -65,7 +68,7 @@ Gerrit.install(function(self) {
       window.landingWidgetConfig = cfg || null;
       if (!window.landingWidgetConfig) {
         console.log('LandingWidget is not configured.');
-        return null;
+        return Promise.resolve(null);
       }
       return getProjectConfig(project);
     });
