@@ -110,7 +110,7 @@ Gerrit.install(function(self) {
       section.innerHTML =
           '<span class="gr-change-metadata style-scope title"></span>' +
           '<span class="value style-scope gr-change-metadata">&nbsp;</span>';
-      document.querySelector('gr-change-metadata').appendChild(section);
+      document.querySelector('gr-change-metadata > gr-external-style').appendChild(section);
       this.row = section;
     }
   };
