@@ -34,7 +34,7 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
   public Response<LandingConfig> apply(ProjectResource project) throws NoSuchProjectException {
     LandingConfig r = new LandingConfig();
 
-    if (!project.getControl().getUser().isIdentifiedUser()) {
+    if (!project.getUser().isIdentifiedUser()) {
       return Response.none();
     }
 
