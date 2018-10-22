@@ -143,11 +143,6 @@ Gerrit.install(function(self) {
         dataCell.appendChild(link);
         dataCell.appendChild(document.createTextNode(' '));
       });
-      var span = document.createElement('span');
-      span.setAttribute('style',
-        'font-weight: bold; background-color: #ffff00; color: #000');
-      span.innerText = 'NEW!';
-      dataCell.appendChild(span);
     } else {
       dataCell.innerText = 'Unknown';
     }
