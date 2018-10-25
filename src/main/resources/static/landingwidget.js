@@ -37,6 +37,7 @@ Gerrit.install(function(self) {
   }
 
   /**
+   * @param {!Object} project
    * @returns {!Promise} that resolves to config Object or null.
    */
   var getProjectConfig = function(project) {
