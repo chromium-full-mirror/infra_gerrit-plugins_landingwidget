@@ -1,5 +1,5 @@
 load("//tools/bzl:plugin.bzl", "gerrit_plugin")
-load("//tools/bzl:js.bzl", "bundle_assets", "polygerrit_plugin")
+load("//tools/bzl:js.bzl", "polygerrit_plugin")
 
 gerrit_plugin(
     name = "landingwidget",
@@ -14,6 +14,6 @@ gerrit_plugin(
 
 polygerrit_plugin(
     name = "landingwidget_ui",
-    plugin_name = "landingwidget",
     app = "src/main/resources/static/landingwidget.js",
+    plugin_name = "landingwidget",
 )
