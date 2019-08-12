@@ -1,0 +1,115 @@
+<dom-module id="landing-widget">
+  <script>
+    Gerrit.install((plugin) => {
+      const JSON_PREFIX = ')]}\'';
+
+      /**
+       * Fetch JSON from the given url endpoint.
+       */
+      const fetchJSON = async (url, options) => {
+        const response = await fetch(url, options);
+        if (response.status == 204 || !response.ok) {
+          console.error(`${url} returned with status ${response.status}.`);
+          return null;
+        }
+        try {
+          let responseText = response.text();
+          if (responseText.startsWith(JSON_PREFIX)) {
+            responseText = responseText.substring(JSON_PREFIX.length);
+          }
+          return JSON.parse(responseText);
+        } catch (e) {
+          console.error(`${url} returned invalid JSON '${responseText}'`);
+          return null;
+        }
+      }
+
+      /**
+       * Get the LandingWidget configuration for the given project.
+       */
+      const getProjectConfig = async (project) => {
+        const landingWidgetUrl =
+          `/projects/${encodeURIComponent(project)}/landingwidget~config`;
+        const config = await fetchJSON(landingWidgetUrl) || null;
+        if (!config) {
+          console.log('LandingWidget is not configured');
+          return null;
+        }
+
+        // Legacy config from GerritSiteFooter.html
+        if (config.projectPatterns) {
+          const configMatchesProject = config.projectPatters.some(
+            (pattern) => project.match(pattern));
+          if (!configMatchesProject) {
+            return null;
+          }
+        }
+
+        return config;
+      };
+
+      /**
+       * Renders the widget.
+       * @param {!HTMLElement} element The element inside which the widget will
+       *   be displayed.
+       * @param {!Array<string>} versions List of version numbers to display.
+       * @param {string} versionsLink Target url that will be opened when the
+       *   user clicks any of the versions.
+       */
+      const renderLandingWidget = (element, versions, versionsLink) => {
+        const title = document.createElement('span');
+        title.className = 'style-scope gr-change-metadata title';
+        title.innerText = 'Landed in';
+
+        const value = document.createElement('span');
+        value.className = 'style-scope gr-change-metadata value';
+        versions.forEach((version) => {
+          const link = document.createElement('a');
+          link.target = '_blank';
+          link.href = versionsLink;
+          link.innerText = version;
+          value.appendChild(link);
+          value.appendChild(document.createTextNode(' '));
+        });
+
+        const section = document.createElement('section');
+        section.className = 'style-scope gr-change-metadata';
+        section.appendChild(title);
+        section.appendChild(value);
+
+        element.appendChild(section);
+      }
+
+      /**
+       * Display a widget with the version of the first build that contains the
+       * change (i.e. the version that the change 'landed in').
+       */
+      plugin.hook('change-metadata-item').onAttached(async (element) => {
+        // Display only for merged changes.
+        const change = element.change;
+        if (element.change.status != 'MERGED') {
+          return;
+        }
+
+        // Fetch the configuration for the current project, if any.
+        const config = await getProjectConfig(change.project);
+        if (!config || config.disabled) {
+          console.log('LandingWidget disabled.');
+          return;
+        }
+
+        // Fetch the first build version that the change landed in.
+        const lookupFirstBuildUrl =
+          `${config.serviceUrl}/lookupFirstBuild?` +
+          `instance=${config.instanceName}&cl=${change._number}`;
+
+        const response = await fetchJSON(
+          lookupFirstBuildUrl, {credentials: 'include'});
+        const versionsLink =
+          `${config.serviceUrl}/cl?q=${config.instanceName}:${change._number}`;
+
+        renderLandingWidget(element, response.versions, versionsLink);
+      });
+    });
+  </script>
+</dom-module>
