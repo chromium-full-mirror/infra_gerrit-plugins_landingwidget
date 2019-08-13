@@ -14,6 +14,6 @@ gerrit_plugin(
 
 polygerrit_plugin(
     name = "landingwidget_ui",
-    app = "src/main/resources/static/landingwidget.html",
+    app = "src/main/resources/static/landingwidget.js",
     plugin_name = "landingwidget",
 )
