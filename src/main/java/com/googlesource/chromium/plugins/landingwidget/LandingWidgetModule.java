@@ -14,8 +14,7 @@ import com.google.gerrit.extensions.webui.WebUiPlugin;
 public class LandingWidgetModule extends RestApiModule {
   @Override
   protected void configure() {
-    DynamicSet.bind(binder(), WebUiPlugin.class)
-        .toInstance(WebUiPlugin.js("landingwidget.html"));
+    DynamicSet.bind(binder(), WebUiPlugin.class).toInstance(WebUiPlugin.js("landingwidget.html"));
 
     get(PROJECT_KIND, "config").to(GetLandingWidgetConfig.class);
   }
