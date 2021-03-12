@@ -34,7 +34,7 @@ class ChromiumLandingWidget extends Polymer.Element {
         value: false,
       },
       restApi: {
-        type: Function,
+        type: Object,
       },
       versions: {
         type: Array,
@@ -52,7 +52,7 @@ class ChromiumLandingWidget extends Polymer.Element {
 
   /**
    * @param {?Object} change
-   * @param {?Function} restApi
+   * @param {?Object} restApi
    */
   async _onChange(change, restApi) {
     if (!this.change || !this.restApi) {
@@ -103,7 +103,7 @@ class ChromiumLandingWidget extends Polymer.Element {
   async _getProjectConfig(project) {
     const landingWidgetUrl =
       `/projects/${encodeURIComponent(project)}/landingwidget~config`;
-    const config = await this.restApi().get(landingWidgetUrl) || null;
+    const config = await this.restApi.get(landingWidgetUrl) || null;
     if (!config) {
       console.info('LandingWidget is not configured');
       return null;
@@ -149,6 +149,6 @@ customElements.define(ChromiumLandingWidget.is, ChromiumLandingWidget);
 Gerrit.install((plugin) => {
   plugin.registerCustomComponent(
     'change-metadata-item', 'chromium-landing-widget').onAttached(view => {
-      view.restApi = plugin.restApi;
+      view.restApi = plugin.restApi();
     });
 });
