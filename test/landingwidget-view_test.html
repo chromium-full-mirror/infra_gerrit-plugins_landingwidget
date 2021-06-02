@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+Copyright 2021 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+<title>chromium-landing-widget tests</title>
+
+<script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+<script src="../node_modules/web-component-tester/browser.js"></script>
+
+<test-fixture id="basic">
+  <template>
+    <chromium-landing-widget></chromium-landing-widget>
+  </template>
+</test-fixture>
+
+<script type="module">
+  import './common-test-setup.js';
+  import '../src/main/resources/static/landingwidget-view.js';
+
+  suite('chromium-landing-widget basic tests', () => {
+    let sandbox;
+    let element;
+
+    setup(() => {
+      element = fixture('basic');
+      sandbox = sinon.sandbox.create();
+    });
+
+    teardown(() => {
+      sandbox.restore();
+    });
+
+    test('_onChange sets element.versions', async () => {
+      sandbox.stub(element, '_getProjectConfig')
+          .returns(Promise.resolve({
+            instanceName: 'instance',
+            serviceUrl: 'service-url',
+            disabled: false,
+          }));
+      sandbox.stub(element, '_fetchJSON')
+          .returns(Promise.resolve({
+            versions: ['version1', 'version2'],
+          }));
+      Object.assign(element, {
+        restApi: {get: () => ({})},
+        change: {
+          status: 'MERGED',
+          _number: 1,
+        },
+        versions: [],
+        hasVersionInfo: false,
+      });
+
+      await element._onChange();
+      assert.deepEqual(element.versions, [
+        {text: 'version1', link: 'service-url/cl?q=instance:1'},
+        {text: 'version2', link: 'service-url/cl?q=instance:1'},
+      ]);
+      assert.strictEqual(element.hasVersionInfo, true);
+    });
+
+    test('_getProjectConfig loads the LandingWidget config', async () => {
+      const config = {projectPatterns: ['a', 'b']};
+      Object.assign(element, {
+        restApi: {get: () => (config)},
+      });
+      assert.strictEqual(await element._getProjectConfig('c'), null);
+      assert.deepEqual(await element._getProjectConfig('a'), config);
+    });
+
+    test('_fetchJSON parses the response text', async () => {
+      const obj = {a: [1, 2, 3], b: {c: 'd'}};
+      sandbox.stub(window, 'fetch').returns(Promise.resolve({
+        ok: true,
+        text: async () => `)]}'${JSON.stringify(obj)}`,
+      }));
+      assert.deepEqual(await element._fetchJSON('https://foo.com', {}), obj);
+    });
+  });
+</script>

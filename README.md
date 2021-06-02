@@ -16,3 +16,9 @@ mkdir -p polygerrit-ui/app/plugins/landingwidget
 ln -s /path/to/landingwidget-plugin/src/main/resources/static polygerrit-ui/app/plugins/landingwidget/static
 ./polygerrit-ui/run-server.sh -host chromium-review.googlesource.com
 ```
+
+## To run tests
+
+```
+npm run wct-test
+```
