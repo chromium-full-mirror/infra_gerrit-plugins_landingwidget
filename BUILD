@@ -1,5 +1,4 @@
 load("//tools/bzl:plugin.bzl", "gerrit_plugin")
-load("//tools/bzl:js.bzl", "polygerrit_plugin")
 
 gerrit_plugin(
     name = "landingwidget",
@@ -10,10 +9,4 @@ gerrit_plugin(
         "Implementation-Title: LandingWidget plugin",
     ],
     resources = glob(["src/main/**/*"]),
-)
-
-polygerrit_plugin(
-    name = "landingwidget_ui",
-    app = "src/main/resources/static/landingwidget.js",
-    plugin_name = "landingwidget",
 )

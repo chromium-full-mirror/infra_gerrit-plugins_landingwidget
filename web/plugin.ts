@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import './landingwidget-view.js';
+import '@gerritcodereview/typescript-api/gerrit';
+import './landingwidget';
 
-Gerrit.install((plugin) => {
+window.Gerrit.install(plugin => {
   plugin.registerCustomComponent(
-    'change-metadata-item', 'chromium-landing-widget').onAttached(view => {
-      view.restApi = plugin.restApi();
-    });
+      'change-metadata-item', 'chromium-landing-widget');
 });

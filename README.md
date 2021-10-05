@@ -1,24 +1,33 @@
 # LandingWidget Plugin for Gerrit
 
-## To use with the local testsite
+## Setup
 
-```
-ln -s /path/to/landingwidget-plugin plugins/landingwidget
-bazel build plugins/landingwidget && \
-  cp buck-out/gen/plugins/landingwidget/landingwidget.jar ../gerrit_testsite/plugins/ && \
-  ../gerrit_testsite/bin/gerrit.sh restart
-```
+This plugin must be placed inside the Gerrit plugins directory:
 
-## To use with the polygerrit-ui server against live data
+    git clone --recurse-submodules https://gerrit.googlesource.com/gerrit
+    cd gerrit/plugins
+    git clone https://chromium.googlesource.com/infra/gerrit-plugins/landingwidget
 
-```
-mkdir -p polygerrit-ui/app/plugins/landingwidget
-ln -s /path/to/landingwidget-plugin/src/main/resources/static polygerrit-ui/app/plugins/landingwidget/static
-./polygerrit-ui/run-server.sh -host chromium-review.googlesource.com
-```
+## Web Plugin Development
 
-## To run tests
+For running unit tests execute:
 
-```
-npm run wct-test
-```
+    bazel test --test_output=all //plugins/landingwidget/web:karma_test
+
+For checking or fixing eslint formatter problems run:
+
+    bazel test //plugins/landingwidget/web:lint_test
+    bazel run //plugins/landingwidget/web:lint_bin -- --fix "$(pwd)/plugins/landingwidget/web"
+
+For testing the plugin with
+[Gerrit FE Dev Helper](https://gerrit.googlesource.com/gerrit-fe-dev-helper/)
+build the JavaScript bundle and copy it to the `plugins/landingwidget` folder:
+
+    bazel build //plugins/landingwidget/web:landingwidget
+    cp -f bazel-bin/plugins/landingwidget/web/landingwidget.js plugins/landingwidget
+
+and let the Dev Helper redirect from `.+/plugins/landingwidget/static/landingwidget.js` to
+`http://localhost:8081/plugins_/plugins/landingwidget.js`.
+
+Note for local testing: this plugin fetches from an external site which may be
+blocked by CORS policy.
