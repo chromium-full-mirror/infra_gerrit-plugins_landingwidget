@@ -178,7 +178,7 @@ export class ChromiumLandingWidget extends LitElement {
       if (responseText.startsWith(JSON_PREFIX)) {
         responseText = responseText.substring(JSON_PREFIX.length);
       }
-      return JSON.parse(responseText);
+      return JSON.parse(responseText) as object;
     } catch (e) {
       console.error(`${url} returned invalid JSON '${responseText}'`);
       return null;
