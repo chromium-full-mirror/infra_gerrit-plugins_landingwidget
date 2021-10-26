@@ -84,6 +84,11 @@ export class ChromiumLandingWidget extends LitElement {
     a {
       color: var(--link-color);
     }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
   `;
 
   override render() {
@@ -91,10 +96,12 @@ export class ChromiumLandingWidget extends LitElement {
       return;
     }
     const items = this.versions.map((v: LandingWidgetVersion) =>
-        html`<a href="${v.link}" target="_blank">${v.text}</a>`);
+        html`<li><a href="${v.link}" target="_blank">${v.text}</a></li>`);
     return html`
-      <span class="title">Landed in</span>
-      <span class="value">${items}</span>
+      <section>
+        <span class="title">Landed in</span>
+        <ul class="value">${items}</ul>
+      </section>
     `;
   }
 
