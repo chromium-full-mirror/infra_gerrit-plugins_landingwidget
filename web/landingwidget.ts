@@ -95,12 +95,16 @@ export class ChromiumLandingWidget extends LitElement {
     if (!this.hasVersionInfo) {
       return;
     }
-    const items = this.versions.map((v: LandingWidgetVersion) =>
-        html`<li><a href="${v.link}" target="_blank">${v.text}</a></li>`);
+    const items = this.versions.map(
+      (v: LandingWidgetVersion) =>
+        html`<li><a href="${v.link}" target="_blank">${v.text}</a></li>`
+    );
     return html`
       <section>
         <span class="title">Landed in</span>
-        <ul class="value">${items}</ul>
+        <ul class="value">
+          ${items}
+        </ul>
       </section>
     `;
   }
@@ -129,13 +133,12 @@ export class ChromiumLandingWidget extends LitElement {
     const changeNum = this.change._number;
     // We need to use fetch instead of restApi because we need to include
     // credentials.
-    const response = await this.fetchJSON(
+    const response = (await this.fetchJSON(
       `${config.serviceUrl}/lookupFirstBuild` +
         `?instance=${config.instanceName}&cl=${changeNum}`,
       {credentials: 'include'}
-    ) as LandingWidgetResponse;
-    const versionsLink =
-        `${config.serviceUrl}/cl?q=${config.instanceName}:${changeNum}`;
+    )) as LandingWidgetResponse;
+    const versionsLink = `${config.serviceUrl}/cl?q=${config.instanceName}:${changeNum}`;
 
     if (response?.versions) {
       this.versions = response.versions.map((v: string) => {
@@ -151,10 +154,11 @@ export class ChromiumLandingWidget extends LitElement {
    * Get the LandingWidget configuration for the given project.
    */
   async getProjectConfig(project: string): Promise<LandingWidgetConfig | null> {
-    const landingWidgetUrl =
-        `/projects/${encodeURIComponent(project)}/landingwidget~config`;
+    const landingWidgetUrl = `/projects/${encodeURIComponent(
+      project
+    )}/landingwidget~config`;
     const config: LandingWidgetConfig =
-        await this.plugin.restApi().get(landingWidgetUrl) || null;
+      (await this.plugin.restApi().get(landingWidgetUrl)) || null;
     if (!config) {
       console.info('LandingWidget is not configured');
       return null;
@@ -162,7 +166,8 @@ export class ChromiumLandingWidget extends LitElement {
     // Legacy config from GerritSiteFooter.html
     if (config.projectPatterns) {
       const configMatchesProject = config.projectPatterns.some(pattern =>
-          project.match(pattern));
+        project.match(pattern)
+      );
       if (!configMatchesProject) {
         return null;
       }

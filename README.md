@@ -10,21 +10,22 @@ This plugin must be placed inside the Gerrit plugins directory:
 
 ## Web Plugin Development
 
+Run the commands below in web/.
+
 For running unit tests execute:
 
-    bazel test --test_output=all //plugins/landingwidget/web:karma_test
+    make test
 
 For checking or fixing eslint formatter problems run:
 
-    bazel test //plugins/landingwidget/web:lint_test
-    bazel run //plugins/landingwidget/web:lint_bin -- --fix "$(pwd)/plugins/landingwidget/web"
+    make lint_test
+    make lint_fix
 
 For testing the plugin with
 [Gerrit FE Dev Helper](https://gerrit.googlesource.com/gerrit-fe-dev-helper/)
-build the JavaScript bundle and copy it to the `plugins/landingwidget` folder:
+the command below builds build the JavaScript bundle and copies it to the `plugins/landingwidget` folder:
 
-    bazel build //plugins/landingwidget/web:landingwidget
-    cp -f bazel-bin/plugins/landingwidget/web/landingwidget.js plugins/landingwidget
+    make build
 
 and let the Dev Helper redirect from `.+/plugins/landingwidget/static/landingwidget.js` to
 `http://localhost:8081/plugins_/plugins/landingwidget.js`.
