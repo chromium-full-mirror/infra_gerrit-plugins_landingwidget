@@ -1,4 +1,4 @@
-// Copyright 2021 The Chromium Authors. All rights reserved.
+// Copyright 2022 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,6 +11,8 @@ declare interface LandingWidgetConfig {
   disabled: boolean;
   instanceName: string;
   serviceUrl: string;
+  endpoint: string;
+  copyText: string;
   projectPatterns: string[];
 }
 
@@ -48,6 +50,9 @@ export class ChromiumLandingWidget extends LitElement {
 
   @state()
   versions: LandingWidgetVersion[] = [];
+
+  @state()
+  copyText = 'Landed in';
 
   override update(changedProperties: PropertyValues) {
     if (changedProperties.has('change')) {
@@ -101,7 +106,7 @@ export class ChromiumLandingWidget extends LitElement {
     );
     return html`
       <section>
-        <span class="title">Landed in</span>
+        <span class="title">${this.copyText}</span>
         <ul class="value">
           ${items}
         </ul>
@@ -129,13 +134,24 @@ export class ChromiumLandingWidget extends LitElement {
       return;
     }
 
+    // Use default values of of copyText (Landed in) and
+    // endpoint (lookupFirstBuild) if not present in config.
+    if (config.copyText) {
+      this.copyText = config.copyText;
+    }
+    let endpoint:string = 'lookupFirstBuild';
+    if (config.endpoint) {
+      endpoint = config.endpoint;
+    }
+
     // Fetch the first build version that the change landed in.
     const changeNum = this.change._number;
     // We need to use fetch instead of restApi because we need to include
     // credentials.
+    const firstBuildUrl = `${config.serviceUrl}/${endpoint}` +
+      `?instance=${config.instanceName}&cl=${changeNum}`
     const response = (await this.fetchJSON(
-      `${config.serviceUrl}/lookupFirstBuild` +
-        `?instance=${config.instanceName}&cl=${changeNum}`,
+      firstBuildUrl,
       {credentials: 'include'}
     )) as LandingWidgetResponse;
     const versionsLink = `${config.serviceUrl}/cl?q=${config.instanceName}:${changeNum}`;

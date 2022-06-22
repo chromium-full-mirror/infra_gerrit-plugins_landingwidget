@@ -53,6 +53,8 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
     r.disabled = cfg.getString(PROJECT, name, "disabled");
     r.instanceName = cfg.getString(PROJECT, name, "instanceName");
     r.serviceUrl = cfg.getString(PROJECT, name, "serviceUrl");
+    r.endpoint = cfg.getString(PROJECT, name, "endpoint");
+    r.copyText = cfg.getString(PROJECT, name, "copyText");
     return Response.ok(r);
   }
 
@@ -65,5 +67,11 @@ class GetLandingWidgetConfig implements RestReadView<ProjectResource> {
 
     @SerializedName("serviceUrl")
     String serviceUrl;
+
+    @SerializedName("endpoint")
+    String endpoint;
+
+    @SerializedName("copyText")
+    String copyText;
   }
 }

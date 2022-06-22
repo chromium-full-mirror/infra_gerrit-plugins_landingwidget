@@ -17,8 +17,10 @@ suite('chromium-landing-widget tests', () => {
   test('onChange sets element.versions', async () => {
     sinon.stub(element, 'getProjectConfig').returns(
       Promise.resolve({
-        instanceName: 'instance',
-        serviceUrl: 'service-url',
+        instanceName: 'chromium',
+        serviceUrl: 'https://crosland.corp.google.com',
+        endpoint: 'lookupFirstBuild',
+        copyText: 'Landed in',
         disabled: false,
         projectPatterns: [],
       })
@@ -43,16 +45,18 @@ suite('chromium-landing-widget tests', () => {
     });
     await element.onChange();
     assert.deepEqual(element.versions, [
-      {text: 'version1', link: 'service-url/cl?q=instance:1'},
-      {text: 'version2', link: 'service-url/cl?q=instance:1'},
+      {text: 'version1', link: 'https://crosland.corp.google.com/cl?q=chromium:1'},
+      {text: 'version2', link: 'https://crosland.corp.google.com/cl?q=chromium:1'},
     ]);
     assert.strictEqual(element.hasVersionInfo, true);
   });
 
   test('getProjectConfig loads the LandingWidget config', async () => {
     const config = {
-      instanceName: 'instance',
-      serviceUrl: 'service-url',
+      instanceName: 'chromium',
+      serviceUrl: 'https://crosland.corp.google.com',
+      endpoint: 'lookupFirstBuild',
+      copyText: 'Landed in',
       disabled: false,
       projectPatterns: ['a', 'b'],
     };
