@@ -5,7 +5,7 @@
 import '@gerritcodereview/typescript-api/gerrit';
 import './landingwidget';
 
-window.Gerrit.install(plugin => {
+window.Gerrit?.install(plugin => {
   plugin.registerCustomComponent(
     'change-metadata-item',
     'chromium-landing-widget'

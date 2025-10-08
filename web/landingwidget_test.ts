@@ -1,17 +1,13 @@
-import {assert} from '@open-wc/testing';
+import {assert, fixture, html} from '@open-wc/testing';
+import './test-setup';
 import './landingwidget';
 import {ChromiumLandingWidget} from './landingwidget';
 
 suite('chromium-landing-widget tests', () => {
   let element: ChromiumLandingWidget;
 
-  setup(() => {
-    element = document.createElement('chromium-landing-widget');
-    document.body.appendChild(element);
-  });
-
-  teardown(() => {
-    document.body.removeChild(element);
+  setup(async () => {
+    element = await fixture(html`<chromium-landing-widget></chromium-landing-widget>`);
   });
 
   test('onChange sets element.versions', async () => {

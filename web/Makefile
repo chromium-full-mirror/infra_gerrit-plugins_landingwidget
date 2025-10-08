@@ -5,7 +5,7 @@
 .PHONY: test
 
 test:
-	bazel test --test_output=all //plugins/landingwidget/web:karma_test
+	bazel test --test_output=all //plugins/landingwidget/web:web_test_runner
 
 lint_test:
 	bazel test //plugins/landingwidget/web:lint_test

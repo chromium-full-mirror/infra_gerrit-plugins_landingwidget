@@ -5,7 +5,7 @@
 import {PluginApi} from '@gerritcodereview/typescript-api/plugin';
 import {ChangeInfo} from '@gerritcodereview/typescript-api/rest-api';
 import {css, html, LitElement, PropertyValues} from 'lit';
-import {customElement, property, state} from 'lit/decorators';
+import {customElement, property, state} from 'lit/decorators.js';
 
 declare interface LandingWidgetConfig {
   disabled: boolean;
